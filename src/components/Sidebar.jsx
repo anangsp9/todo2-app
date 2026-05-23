@@ -9,74 +9,32 @@ import {
 
 function Sidebar() {
   return (
-    <aside className="
-w-full
-lg:w-[280px]
-bg-[#eef1ff]
-border-r
-border-gray-200
-flex
-flex-col
-justify-between
-p-4
-lg:p-6
-">
-      <div>
-        <div className="flex items-center gap-3 mb-10">
-          <div className="w-12 h-12 rounded-full bg-indigo-700 text-white flex items-center justify-center font-bold">
-            T
-          </div>
-
-          <div>
-            <h1 className="text-3xl font-bold text-indigo-700">
-              TaskFlow
-            </h1>
-
-            <p className="text-gray-500 text-sm">
-              Productivity Hub
-            </p>
-          </div>
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-[#f1f3ff] flex flex-col p-4 gap-y-2 shadow-sm z-50 hidden md:flex">
+      <div className="mb-8 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-full bg-indigo-700 flex items-center justify-center text-white font-bold text-lg">
+          T
         </div>
-
-        <button className="w-full bg-indigo-700 hover:bg-indigo-800 transition-all text-white py-4 rounded-2xl flex items-center justify-center gap-2 font-medium shadow-md mb-8">
-          <Plus size={18} />
-          New Project
-        </button>
-
-        <nav className="flex lg:block gap-2 overflow-x-auto lg:overflow-visible">
-          <SidebarItem
-            icon={<LayoutList size={20} />}
-            text="All Tasks"
-          />
-
-          <SidebarItem
-            active
-            icon={<CalendarDays size={20} />}
-            text="Today"
-          />
-
-          <SidebarItem
-            icon={<CalendarDays size={20} />}
-            text="Upcoming"
-          />
-
-          <SidebarItem
-            icon={<CheckCircle2 size={20} />}
-            text="Completed"
-          />
-        </nav>
+        <div>
+          <h3 className="text-2xl font-black text-indigo-700 leading-tight">TaskFlow</h3>
+          <p className="text-xs text-gray-500 font-semibold tracking-wide">Productivity Hub</p>
+        </div>
       </div>
 
-      <div className="space-y-4">
-        <SidebarItem
-          icon={<CircleHelp size={20} />}
-          text="Help Center"
-        />
+      <button className="w-full flex items-center justify-center gap-2 bg-indigo-700 text-white text-sm font-medium py-2.5 rounded-lg hover:bg-indigo-800 transition-colors duration-150 mb-4 shadow-md">
+        <Plus size={16} />
+        New Project
+      </button>
 
-        <SidebarItem
-          icon={<LogOut size={20} />}
-          text="Log Out"
-        />
+      <nav className="flex-1 flex flex-col gap-1">
+        <SidebarItem icon={<LayoutList size={18} />} text="All Tasks" />
+        <SidebarItem active icon={<CalendarDays size={18} />} text="Today" />
+        <SidebarItem icon={<CalendarDays size={18} />} text="Upcoming" />
+        <SidebarItem icon={<CheckCircle2 size={18} />} text="Completed" />
+      </nav>
+
+      <div className="mt-auto flex flex-col gap-1">
+        <SidebarItem icon={<CircleHelp size={18} />} text="Help Center" />
+        <SidebarItem icon={<LogOut size={18} />} text="Log Out" />
       </div>
     </aside>
   );
@@ -85,10 +43,10 @@ lg:p-6
 function SidebarItem({ icon, text, active }) {
   return (
     <button
-      className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-medium ${
+      className={`w-full flex items-center gap-4 px-4 py-2.5 rounded-lg transition-all duration-150 text-sm font-medium ${
         active
-          ? "bg-indigo-700 text-white shadow-md"
-          : "text-gray-700 hover:bg-white"
+          ? "bg-indigo-700 text-white shadow-md scale-[0.97] translate-x-0.5 opacity-90"
+          : "text-gray-600 hover:bg-[#e1e8fd]"
       }`}
     >
       {icon}

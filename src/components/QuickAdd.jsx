@@ -6,26 +6,31 @@ function QuickAdd({ addTask }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     addTask(value);
     setValue("");
   };
 
-  return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-[#eef1ff] rounded-2xl px-5 py-4 flex items-center gap-3 mt-8"
-    >
-      <Plus className="text-gray-500" />
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSubmit(e);
+    }
+  };
 
+  return (
+    <div className="mt-2 relative w-full group">
+      <Plus
+        size={18}
+        className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-600 transition-colors duration-150"
+      />
       <input
         type="text"
         placeholder="Quick add task (press Enter)"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="bg-transparent w-full outline-none text-lg"
+        onKeyDown={handleKeyDown}
+        className="w-full bg-[#f1f3ff] border border-transparent rounded-lg py-3 pl-11 pr-4 text-base text-gray-800 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 focus:bg-white focus:shadow-[0_0_0_4px_rgba(79,70,229,0.1)] transition-all duration-150 placeholder:text-gray-400 outline-none"
       />
-    </form>
+    </div>
   );
 }
 

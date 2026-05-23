@@ -70,7 +70,6 @@ h1,
 h2 {
   font-family: var(--heading);
   font-weight: 500;
-  color: var(--text-h);
 }
 
 h1 {
@@ -116,4 +115,11 @@ body {
   font-family: "Inter", sans-serif;
   background: #f9f9ff;
   color: #141b2b;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  overflow-x: hidden;
 }
