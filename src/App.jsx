@@ -4,6 +4,7 @@ import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import TaskItem from "./components/TaskItem";
 import QuickAdd from "./components/QuickAdd";
+import AddTaskModal from "./components/AddTaskModal";
 
 function App() {
   const [tasks, setTasks] = useState([
@@ -41,15 +42,13 @@ function App() {
     );
   };
 
-  const addTask = (title) => {
-    if (!title.trim()) return;
-
+  const addTask = (taskData) => {
     const newTask = {
       id: Date.now(),
-      title,
-      category: "General",
-      dueDate: "Today",
-      time: "",
+      title: taskData.title,
+      category: taskData.category,
+      dueDate: taskData.dueDate,
+      time: taskData.time,
       completed: false,
     };
 
@@ -58,12 +57,14 @@ function App() {
 
   const remaining = tasks.filter((t) => !t.completed).length;
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="flex min-h-screen bg-[#f9f9ff] overflow-x-hidden">
       <Sidebar />
 
       <main className="flex-1 md:ml-64 flex flex-col min-h-screen bg-[#f9f9ff]">
-        <Header />
+        <Header onOpenModal={() => setIsModalOpen(true)} />
 
         <div className="flex-1 pt-24 px-4 md:px-10 pb-8 flex justify-center w-full">
           <div className="w-full max-w-[800px] flex flex-col gap-6">
@@ -104,6 +105,13 @@ function App() {
           <Calendar size={22} />
         </a>
       </nav>
+
+      <AddTaskModal
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  onAddTask={addTask}
+/>
+
     </div>
   );
 }
