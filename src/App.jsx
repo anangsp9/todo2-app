@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "./lib/supabase";
 import { LayoutList, CalendarDays, Calendar } from "lucide-react";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
@@ -7,63 +8,105 @@ import QuickAdd from "./components/QuickAdd";
 import AddTaskModal from "./components/AddTaskModal";
 
 function App() {
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: "Finish project proposal",
-      category: "Work",
-      dueDate: "Today",
-      time: "14:00",
-      completed: false,
-    },
-    {
-      id: 2,
-      title: "Call mom",
-      category: "Personal",
-      dueDate: "Today",
-      time: "",
-      completed: false,
-    },
-    {
-      id: 3,
-      title: "Buy groceries",
-      category: "Shopping",
-      dueDate: "",
-      time: "",
-      completed: true,
-    },
-  ]);
+  const [tasks, setTasks] = useState([]);
 
-  const toggleTask = (id) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
-  };
+const toggleTask = async (id) => {
+  const task = tasks.find((t) => t.id === id);
 
-  const deleteTask = (id) => {
+  const { error } = await supabase
+    .from("tasks")
+    .update({
+      completed: !task.completed,
+    })
+    .eq("id", id);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  setTasks(
+    tasks.map((t) =>
+      t.id === id
+        ? {
+            ...t,
+            completed: !t.completed,
+          }
+        : t
+    )
+  );
+};
+
+const deleteTask = async (id) => {
+  const { error } = await supabase
+    .from("tasks")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
   setTasks(tasks.filter((task) => task.id !== id));
 };
 
 
-  const addTask = (taskData) => {
-    const newTask = {
-      id: Date.now(),
-      title: taskData.title,
-      category: taskData.category,
-      dueDate: taskData.dueDate,
-      time: taskData.time,
-      completed: false,
-    };
+const addTask = async (taskData) => {
+  const { data, error } = await supabase
+    .from("tasks")
+    .insert([
+      {
+        title: taskData.title,
+        category: taskData.category,
+        due_date: taskData.dueDate || null,
+        task_time: taskData.time || null,
+        completed: false,
+      },
+    ])
+    .select()
+    .single();
 
-    setTasks([newTask, ...tasks]);
-  };
+  if (error) {
+    console.error(error);
+    return;
+  }
 
-  const updateTask = (updatedTask) => {
+  setTasks([
+    {
+      id: data.id,
+      title: data.title,
+      category: data.category,
+      dueDate: data.due_date,
+      time: data.task_time,
+      completed: data.completed,
+    },
+    ...tasks,
+  ]);
+};
+
+const updateTask = async (updatedTask) => {
+  const { error } = await supabase
+    .from("tasks")
+    .update({
+      title: updatedTask.title,
+      category: updatedTask.category,
+      due_date: updatedTask.dueDate,
+      task_time: updatedTask.time,
+      completed: updatedTask.completed,
+    })
+    .eq("id", updatedTask.id);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
   setTasks(
     tasks.map((task) =>
-      task.id === updatedTask.id ? updatedTask : task
+      task.id === updatedTask.id
+        ? updatedTask
+        : task
     )
   );
 
@@ -99,6 +142,34 @@ function App() {
     day: "numeric",
   });
 };
+
+const fetchTasks = async () => {
+  const { data, error } = await supabase
+    .from("tasks")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+    console.log("DATA:", data);
+  console.log("ERROR:", error);
+  console.log("JUMLAH DATA:", data?.length);
+
+  if (!error) {
+    const formattedTasks = data.map((task) => ({
+      id: task.id,
+      title: task.title,
+      category: task.category,
+      dueDate: task.due_date,
+      time: task.task_time,
+      completed: task.completed,
+    }));
+
+    setTasks(formattedTasks);
+  }
+};
+
+useEffect(() => {
+  fetchTasks();
+}, []);
 
   return (
     <div className="flex min-h-screen bg-[#f9f9ff] overflow-x-hidden">

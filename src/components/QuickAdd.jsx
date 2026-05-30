@@ -6,7 +6,12 @@ function QuickAdd({ addTask }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    addTask(value);
+    addTask({
+  title: value,
+  category: "General",
+  dueDate: "",
+  time: "",
+});
     setValue("");
   };
 
