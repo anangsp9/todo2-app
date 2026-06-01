@@ -120,6 +120,7 @@ const fetchTasks = async () => {
   const { data, error } = await supabase
     .from("tasks")
     .select("*")
+    .order("completed", { ascending: true })
     .order("created_at", { ascending: false });
 
   if (!error) {
