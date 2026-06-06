@@ -7,153 +7,19 @@ import TaskItem from "./components/TaskItem";
 import QuickAdd from "./components/QuickAdd";
 import AddTaskModal from "./components/AddTaskModal";
 import Login from "./pages/Login";
+import { formatDueDate } from "./utils/dateUtils";
+import { useTasks } from "./hooks/useTasks";
 
 function App() {
-  const [tasks, setTasks] = useState([]);
+  const { tasks, setTasks, fetchTasks, deleteTask, toggleTask, addTask, updateTask, } = useTasks();
   const [user, setUser] = useState(null);
 const [loading, setLoading] = useState(true);
-
-const toggleTask = async (id) => {
-  const task = tasks.find((t) => t.id === id);
-
-  const { error } = await supabase
-    .from("tasks")
-    .update({
-      completed: !task.completed,
-    })
-    .eq("id", id);
-
-  if (error) {
-    console.error(error);
-    return;
-  }
-
-  await fetchTasks();
-};
-
-const deleteTask = async (id) => {
-  const { error } = await supabase
-    .from("tasks")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    console.error(error);
-    return;
-  }
-
-  await fetchTasks();
-};
-
-
-const addTask = async (taskData) => {
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { error } = await supabase
-    .from("tasks")
-    .insert([
-      {
-        title: taskData.title,
-        category: taskData.category,
-        due_date: taskData.dueDate || null,
-        task_time: taskData.time || null,
-        completed: false,
-
-        user_id: user.id,
-      },
-    ]);
-
-  if (error) {
-    console.error(error);
-    return;
-  }
-
-  await fetchTasks();
-};
-
-const updateTask = async (updatedTask) => {
-  const { error } = await supabase
-    .from("tasks")
-    .update({
-      title: updatedTask.title,
-      category: updatedTask.category,
-      due_date: updatedTask.dueDate,
-      task_time: updatedTask.time,
-      completed: updatedTask.completed,
-    })
-    .eq("id", updatedTask.id);
-
-  if (error) {
-    console.error(error);
-    return;
-  }
-
-  await fetchTasks();
-
-  setEditingTask(null);
-};
-
 
   const remaining = tasks.filter((t) => !t.completed).length;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [editingTask, setEditingTask] = useState(null);
-
-  const formatDueDate = (dateString) => {
-  if (!dateString) return "";
-
-  const today = new Date();
-  const target = new Date(dateString);
-
-  // reset jam agar perbandingan tanggal akurat
-  today.setHours(0, 0, 0, 0);
-  target.setHours(0, 0, 0, 0);
-
-  const diffTime = target - today;
-  const diffDays = diffTime / (1000 * 60 * 60 * 24);
-
-  if (diffDays === 0) return "Today";
-  if (diffDays === 1) return "Tomorrow";
-  if (diffDays === -1) return "Yesterday";
-
-  return target.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-};
-
-const fetchTasks = async () => {
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return;
-
-  const { data, error } = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("completed", { ascending: true })
-    .order("created_at", { ascending: false });
-
-  if (!error) {
-    const formattedTasks = data.map((task) => ({
-      id: task.id,
-      title: task.title,
-      category: task.category,
-      dueDate: task.due_date,
-      time: task.task_time,
-      completed: task.completed,
-    }));
-
-    setTasks(formattedTasks);
-  }
-};
 
 useEffect(() => {
   if (!user) return;
