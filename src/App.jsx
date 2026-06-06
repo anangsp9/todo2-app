@@ -9,11 +9,11 @@ import AddTaskModal from "./components/AddTaskModal";
 import Login from "./pages/Login";
 import { formatDueDate } from "./utils/dateUtils";
 import { useTasks } from "./hooks/useTasks";
+import { useAuth } from "./hooks/useAuth";
 
 function App() {
   const { tasks, setTasks, fetchTasks, deleteTask, toggleTask, addTask, updateTask, } = useTasks();
-  const [user, setUser] = useState(null);
-const [loading, setLoading] = useState(true);
+  const { user, loading } = useAuth();
 
   const remaining = tasks.filter((t) => !t.completed).length;
 
@@ -28,36 +28,10 @@ useEffect(() => {
 }, [user]);
 
 useEffect(() => {
-  const getUser = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    setUser(user);
-
-    setLoading(false);
-  };
-
-  getUser();
-}, []);
-
-useEffect(() => {
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange(
-  (_, session) => {
-    const currentUser = session?.user ?? null;
-
-    setUser(currentUser);
-
-    if (!currentUser) {
-      setTasks([]);
-    }
+  if (!user) {
+    setTasks([]);
   }
-);
-
-  return () => subscription.unsubscribe();
-}, []);
+}, [user, setTasks]);
 
 if (loading) {
   return (
