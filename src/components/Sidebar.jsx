@@ -9,7 +9,7 @@ import {
 
 import { supabase } from "../lib/supabase";
 
-function Sidebar() {
+function Sidebar({activeFilter,setActiveFilter,}) {
 
     const logout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -37,11 +37,34 @@ function Sidebar() {
       </button>
 
       <nav className="flex-1 flex flex-col gap-1">
-        <SidebarItem icon={<LayoutList size={18} />} text="All Tasks" />
-        <SidebarItem active icon={<CalendarDays size={18} />} text="Today" />
-        <SidebarItem icon={<CalendarDays size={18} />} text="Upcoming" />
-        <SidebarItem icon={<CheckCircle2 size={18} />} text="Completed" />
-      </nav>
+  <SidebarItem
+    icon={<LayoutList size={18} />}
+    text="All Tasks"
+    active={activeFilter === "all"}
+    onClick={() => setActiveFilter("all")}
+  />
+
+  <SidebarItem
+    icon={<CalendarDays size={18} />}
+    text="Today"
+    active={activeFilter === "today"}
+    onClick={() => setActiveFilter("today")}
+  />
+
+  <SidebarItem
+    icon={<CalendarDays size={18} />}
+    text="Upcoming"
+    active={activeFilter === "upcoming"}
+    onClick={() => setActiveFilter("upcoming")}
+  />
+
+  <SidebarItem
+    icon={<CheckCircle2 size={18} />}
+    text="Completed"
+    active={activeFilter === "completed"}
+    onClick={() => setActiveFilter("completed")}
+  />
+</nav>
 
       <div className="mt-auto flex flex-col gap-1">
         <SidebarItem icon={<CircleHelp size={18} />} text="Help Center" />

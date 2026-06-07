@@ -12,7 +12,6 @@ import { useAuth } from "./hooks/useAuth";
 
 function App() {
   const { user, loading } = useAuth();
-
 const {
   tasks,
   setTasks,
@@ -22,12 +21,10 @@ const {
   addTask,
   updateTask,
 } = useTasks(user);
-
   const remaining = tasks.filter((t) => !t.completed).length;
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [editingTask, setEditingTask] = useState(null);
+  const [activeFilter, setActiveFilter] = useState("all");
 
 useEffect(() => {
   if (!user) return;
@@ -53,9 +50,37 @@ if (!user) {
   return <Login />;
 }
 
+const today = new Date().toISOString().split("T")[0];
+
+const filteredTasks = tasks.filter((task) => {
+  switch (activeFilter) {
+    case "all":
+      return true;
+
+    case "today":
+      return task.dueDate === today;
+
+    case "upcoming":
+      return (
+        task.dueDate &&
+        task.dueDate > today &&
+        !task.completed
+      );
+
+    case "completed":
+      return task.completed;
+
+    default:
+      return true;
+  }
+});
+
   return (
     <div className="flex min-h-screen bg-[#f9f9ff] overflow-x-hidden">
-      <Sidebar />
+      <Sidebar
+  activeFilter={activeFilter}
+  setActiveFilter={setActiveFilter}
+/>
 
       <main className="flex-1 md:ml-64 flex flex-col min-h-screen bg-[#f9f9ff]">
         <Header onOpenModal={() => setIsModalOpen(true)} user={user} />
@@ -86,7 +111,7 @@ if (!user) {
 
             {/* Task list */}
             <div className="flex flex-col gap-3">
-              {tasks.map((task) => (
+              {filteredTasks.map((task) => (
                 <TaskItem
   key={task.id}
   task={task}
