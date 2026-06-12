@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { LayoutList, CalendarDays, Calendar, CheckCircle2, } from "lucide-react";
+import { LayoutList, CalendarDays, Calendar, CheckCircle2, Plus, } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import TaskItem from "../components/TaskItem";
@@ -142,6 +142,35 @@ const filteredTasks = useMemo(() => {
           </div>
         </div>
       </main>
+
+        {/* Mobile Floating Action Button */}
+        <button
+        onClick={() => setIsModalOpen(true)}
+        className="
+        md:hidden
+        fixed
+        bottom-20
+        right-5
+        z-50
+        w-14
+        h-14
+        rounded-full
+        bg-indigo-600
+        text-white
+        flex
+        items-center
+        justify-center
+        shadow-[0_8px_24px_rgba(79,70,229,0.35)]
+        backdrop-blur-sm
+        transition-all
+        duration-200
+        hover:bg-indigo-700
+        active:scale-95
+        "
+        aria-label="Add Task"
+        >
+        <Plus size={28} strokeWidth={2.5} />
+        </button>
 
       {/* Mobile bottom nav */}
         <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-around items-center h-16 z-50">
