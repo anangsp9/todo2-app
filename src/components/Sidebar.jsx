@@ -6,18 +6,23 @@ import {
   CircleHelp,
   LogOut,
 } from "lucide-react";
-
 import { supabase } from "../lib/supabase";
+import { useNavigate } from "react-router-dom";
 
-function Sidebar({activeFilter,setActiveFilter,}) {
+function Sidebar({activeFilter}) {
+
+    const navigate = useNavigate();
 
     const logout = async () => {
-    const { error } = await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
 
-    if (error) {
-      console.error(error);
-    }
-  };
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      navigate("/", { replace: true });
+    };
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-[#f1f3ff] flex flex-col p-4 gap-y-2 shadow-sm z-50 hidden md:flex">
@@ -37,33 +42,33 @@ function Sidebar({activeFilter,setActiveFilter,}) {
       </button>
 
       <nav className="flex-1 flex flex-col gap-1">
-  <SidebarItem
-    icon={<LayoutList size={18} />}
-    text="All Tasks"
-    active={activeFilter === "all"}
-    onClick={() => setActiveFilter("all")}
-  />
+<SidebarItem
+  icon={<LayoutList size={18} />}
+  text="All Tasks"
+  active={activeFilter === "all"}
+  onClick={() => navigate("/tasks/all")}
+/>
 
-  <SidebarItem
-    icon={<CalendarDays size={18} />}
-    text="Today"
-    active={activeFilter === "today"}
-    onClick={() => setActiveFilter("today")}
-  />
+<SidebarItem
+  icon={<CalendarDays size={18} />}
+  text="Today"
+  active={activeFilter === "today"}
+  onClick={() => navigate("/tasks/today")}
+/>
 
-  <SidebarItem
-    icon={<CalendarDays size={18} />}
-    text="Upcoming"
-    active={activeFilter === "upcoming"}
-    onClick={() => setActiveFilter("upcoming")}
-  />
+<SidebarItem
+  icon={<CalendarDays size={18} />}
+  text="Upcoming"
+  active={activeFilter === "upcoming"}
+  onClick={() => navigate("/tasks/upcoming")}
+/>
 
-  <SidebarItem
-    icon={<CheckCircle2 size={18} />}
-    text="Completed"
-    active={activeFilter === "completed"}
-    onClick={() => setActiveFilter("completed")}
-  />
+<SidebarItem
+  icon={<CheckCircle2 size={18} />}
+  text="Completed"
+  active={activeFilter === "completed"}
+  onClick={() => navigate("/tasks/completed")}
+/>
 </nav>
 
       <div className="mt-auto flex flex-col gap-1">

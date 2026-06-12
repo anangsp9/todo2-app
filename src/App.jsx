@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import { formatDueDate } from "./utils/dateUtils";
 import { useTasks } from "./hooks/useTasks";
 import { useAuth } from "./hooks/useAuth";
+import { useLocation } from "react-router-dom";
 
 function App() {
   const { user, loading } = useAuth();
@@ -24,7 +25,10 @@ const {
   const remaining = tasks.filter((t) => !t.completed).length;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
-  const [activeFilter, setActiveFilter] = useState("all");
+  const location = useLocation();
+
+const activeFilter =
+  location.pathname.split("/")[2] || "all";
 
 useEffect(() => {
   if (!user) return;
@@ -58,7 +62,10 @@ const filteredTasks = tasks.filter((task) => {
       return true;
 
     case "today":
-      return task.dueDate === today;
+      return (
+        task.dueDate === today &&
+        !task.completed
+      );
 
     case "upcoming":
       return (
@@ -77,10 +84,7 @@ const filteredTasks = tasks.filter((task) => {
 
   return (
     <div className="flex min-h-screen bg-[#f9f9ff] overflow-x-hidden">
-      <Sidebar
-  activeFilter={activeFilter}
-  setActiveFilter={setActiveFilter}
-/>
+      <Sidebar activeFilter={activeFilter} />
 
       <main className="flex-1 md:ml-64 flex flex-col min-h-screen bg-[#f9f9ff]">
         <Header onOpenModal={() => setIsModalOpen(true)} user={user} />
