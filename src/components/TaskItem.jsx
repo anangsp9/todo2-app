@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import PixelCheckbox from "./PixelCheckbox";
+import ElectricBorder from "./ElectricBorder";
 
 const categoryStyles = {
   Work: "text-indigo-700 bg-[#e2dfff]",
@@ -43,9 +44,9 @@ function TaskItem({
     };
   }, []);
 
-  return (
+  const taskCard = (
     <div
-      className={`group bg-white rounded-2xl px-5 py-4 flex items-center justify-between border border-transparent hover:border-gray-200 hover:bg-[#fcfcff] transition-all duration-200 shadow-sm relative ${
+      className={`group bg-white rounded-2xl px-5 py-4 flex items-center justify-between border border-transparent hover:border-gray-200 hover:bg-[#fcfcff] transition-all duration-200 shadow-sm relative z-0 ${
         task.completed ? "opacity-50" : ""
       }`}
       style={{ boxShadow: "0 4px 12px rgba(70, 69, 85, 0.05)" }}
@@ -112,7 +113,7 @@ function TaskItem({
         </button>
 
         {openMenu && (
-          <div className="absolute right-0 top-11 w-40 rounded-xl border border-gray-200 bg-white shadow-lg overflow-hidden z-50">
+          <div className="absolute right-0 top-11 w-40 rounded-xl border border-gray-200 bg-white shadow-lg overflow-hidden z-40">
             <button
               onClick={() => {
                 onEdit(task);
@@ -137,6 +138,28 @@ function TaskItem({
           </div>
         )}
       </div>
+    </div>
+  );
+
+  if (task.completed) {
+    return taskCard;
+  }
+
+  return (
+    <div className={openMenu ? "relative z-50" : "relative"}>
+      {task.completed ? (
+        taskCard
+      ) : (
+        <ElectricBorder
+          color="#6366f1"
+          speed={0.5}
+          chaos={0.045}
+          borderRadius={16}
+          style={{ borderRadius: 16 }}
+        >
+          {taskCard}
+        </ElectricBorder>
+      )}
     </div>
   );
 }
