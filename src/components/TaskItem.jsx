@@ -113,53 +113,63 @@ function TaskItem({
         </button>
 
         {openMenu && (
-          <div className="absolute right-0 top-11 w-40 rounded-xl border border-gray-200 bg-white shadow-lg overflow-hidden z-40">
-            <button
-              onClick={() => {
-                onEdit(task);
-                setOpenMenu(false);
-              }}
-              className="w-full flex items-center gap-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition"
+          <div className="absolute right-0 top-11 z-60">
+            <ElectricBorder
+              color="#6366f1"
+              speed={0.8}
+              chaos={0.025}
+              borderRadius={12}
+              style={{ borderRadius: 12 }}
             >
-              <Pencil size={16} />
-              Edit Task
-            </button>
+              <div className="w-40 rounded-xl bg-white overflow-hidden shadow-2xl">
+                <button
+                  onClick={() => {
+                    onEdit(task);
+                    setOpenMenu(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-4 py-3 text-sm text-gray-700 bg-white hover:bg-gray-50 transition"
+                >
+                  <Pencil size={16} />
+                  Edit Task
+                </button>
 
-            <button
-              onClick={() => {
-                onDelete(task.id);
-                setOpenMenu(false);
-              }}
-              className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-500 hover:bg-red-50 transition"
-            >
-              <Trash2 size={16} />
-              Delete Task
-            </button>
+                <button
+                  onClick={() => {
+                    onDelete(task.id);
+                    setOpenMenu(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-500 bg-white hover:bg-red-50 transition"
+                >
+                  <Trash2 size={16} />
+                  Delete Task
+                </button>
+              </div>
+            </ElectricBorder>
           </div>
         )}
       </div>
     </div>
   );
 
-  if (task.completed) {
-    return taskCard;
+  if (task.completed || openMenu) {
+    return (
+      <div className={openMenu ? "relative z-50" : "relative"}>
+        {taskCard}
+      </div>
+    );
   }
 
   return (
-    <div className={openMenu ? "relative z-50" : "relative"}>
-      {task.completed ? (
-        taskCard
-      ) : (
-        <ElectricBorder
-          color="#6366f1"
-          speed={0.5}
-          chaos={0.045}
-          borderRadius={16}
-          style={{ borderRadius: 16 }}
-        >
-          {taskCard}
-        </ElectricBorder>
-      )}
+    <div className="relative">
+      <ElectricBorder
+        color="#6366f1"
+        speed={0.5}
+        chaos={0.045}
+        borderRadius={16}
+        style={{ borderRadius: 16 }}
+      >
+        {taskCard}
+      </ElectricBorder>
     </div>
   );
 }
