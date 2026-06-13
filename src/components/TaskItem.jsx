@@ -1,5 +1,4 @@
 import {
-  Check,
   Clock,
   CalendarDays,
   MoreVertical,
@@ -7,6 +6,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import PixelCheckbox from "./PixelCheckbox";
 
 const categoryStyles = {
   Work: "text-indigo-700 bg-[#e2dfff]",
@@ -50,18 +50,17 @@ function TaskItem({
       }`}
       style={{ boxShadow: "0 4px 12px rgba(70, 69, 85, 0.05)" }}
     >
-      <div className="flex items-start gap-4 flex-1">
-        {/* Checkbox */}
-        <button
-          onClick={() => toggleTask(task.id)}
-          className={`mt-1 w-5 h-5 rounded-md border flex items-center justify-center transition-colors duration-150 flex-shrink-0 ${
-            task.completed
-              ? "bg-emerald-600 border-emerald-600 text-white"
-              : "border-gray-400 text-transparent hover:border-indigo-600"
-          }`}
+      <div className="flex items-center gap-4 flex-1">
+        {/* Pixel Checkbox */}
+        <div
+          className="shrink-0"
+          onClick={(e) => e.stopPropagation()}
         >
-          <Check size={13} strokeWidth={2.5} />
-        </button>
+          <PixelCheckbox
+            checked={task.completed}
+            onChange={() => toggleTask(task.id)}
+          />
+        </div>
 
         {/* Content */}
         <div className="flex flex-col gap-2">
