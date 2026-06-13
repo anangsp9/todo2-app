@@ -29,6 +29,39 @@ function Dashboard() {
     updateTask,
   } = useTasks(user);
   const remaining = tasks.filter((t) => !t.completed).length;
+  const completed = tasks.filter((t) => t.completed).length;
+  const totalTasks = tasks.length;
+  const progressPercent =
+    totalTasks === 0 ? 0 : Math.round((completed / totalTasks) * 100);
+
+  const displayName = user?.email?.split("@")[0] || "Guest";
+
+  const now = new Date();
+  const currentHour = now.getHours();
+
+  const greeting =
+    currentHour < 12
+      ? "Good Morning"
+      : currentHour < 17
+        ? "Good Afternoon"
+        : currentHour < 20
+          ? "Good Evening"
+          : "Good Night";
+
+  const greetingEmoji =
+    currentHour < 12
+      ? "☀️"
+      : currentHour < 17
+        ? "🌤️"
+        : currentHour < 20
+          ? "🌇"
+          : "🌙";
+
+  const todayText = now.toLocaleDateString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [editingTask, setEditingTask] = useState(null);
@@ -104,22 +137,50 @@ function Dashboard() {
         <div className="flex-1 pt-24 px-4 md:px-10 pb-24 md:pb-8 flex justify-center w-full">
           <div className="w-full max-w-[800px] flex flex-col gap-6">
             {/* Page header */}
-            <div className="flex items-end justify-between border-b border-gray-200 pb-3">
-              <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
-                  {new Date().toLocaleDateString("en-US", {
-                    weekday: "long",
-                  })}
-                </h2>
+            <div className="flex items-end justify-between border-b border-gray-200 pb-5">
+              <div className="flex flex-col gap-2">
+                <div>
+                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+                    {greeting}, {displayName}!{" "}
+                    <span className="inline-block">{greetingEmoji}</span>
+                  </h2>
 
-                <p className="text-base text-gray-400 mt-1">
-                  {new Date().toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </p>
+                  <p className="text-base text-gray-400 mt-1">{todayText}</p>
+                </div>
+
+                <div className="mt-2 w-full max-w-[280px]">
+                  <div className="flex items-center justify-between text-sm mb-1">
+                    <span
+                      className={`font-medium ${
+                        progressPercent === 100
+                          ? "text-emerald-600"
+                          : "text-indigo-700"
+                      }`}
+                    >
+                      {progressPercent === 100
+                        ? "🎉 All tasks completed!"
+                        : `✓ Progress: ${completed}/${totalTasks} completed`}
+                    </span>
+
+                    <span className="text-gray-400 text-xs">
+                      {progressPercent}%
+                    </span>
+                  </div>
+
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+                    <motion.div
+                      className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-violet-500"
+                      animate={{ width: `${progressPercent}%` }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 120,
+                        damping: 20,
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
+
               <div className="text-xs font-semibold text-indigo-700 bg-[#e2dfff] px-3 py-1 rounded-full">
                 {remaining} Task{remaining !== 1 ? "s" : ""} Left
               </div>
